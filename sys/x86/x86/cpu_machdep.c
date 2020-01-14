@@ -878,10 +878,10 @@ SYSCTL_INT(_hw, OID_AUTO, ibrs_active, CTLFLAG_RD, &hw_ibrs_active, 0,
     "Indirect Branch Restricted Speculation active");
 
 SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ibrs, CTLFLAG_RW, 0,
-    "Indirect Branch Restricted Speculation active");
+    "Indirect Branch Restricted Speculation state");
 
 SYSCTL_INT(_machdep_mitigations_ibrs, OID_AUTO, active, CTLFLAG_RD,
-    &hw_ibrs_active, 0, "Indirect Branch Restricted Speculation active");
+    &hw_ibrs_active, 0, "Indirect Branch Restricted Speculation Mitigation state");
 
 void
 hw_ibrs_recalculate(void)
@@ -916,7 +916,33 @@ SYSCTL_PROC(_hw, OID_AUTO, ibrs_disable, CTLTYPE_INT | CTLFLAG_RWTUN |
 SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, disable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     hw_ibrs_disable_handler, "I",
-    "Disable Indirect Branch Restricted Speculation");
+    "Indirect Branch Restricted Speculation Mitigation control (0 - off, 1 - on)");
+
+
+static int
+sysctl_hw_ibrs_disable_state_handler(SYSCTL_HANDLER_ARGS)
+{
+	const char *state;
+
+	switch (hw_ibrs_disable) {
+	case 0: /* off */
+		state = "mitigation off";
+		break;
+	case 1: /* on */
+		state = "mitigation on";
+		break;
+    default:
+		state = "unknown";
+    }
+
+	return (SYSCTL_OUT(req, state, strlen(state)));
+}
+
+SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, state,
+    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
+    sysctl_hw_ibrs_disable_state_handler, "A",
+    "Indirect Branch Restricted Speculation Mitigation state");
+
 
 int hw_ssb_active;
 int hw_ssb_disable;
@@ -926,10 +952,10 @@ SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
     "Speculative Store Bypass Disable active");
 
 SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ssb, CTLFLAG_RW, 0,
-    "Speculative Store Bypass Disable active");
+    "Speculative Store Bypass Mitigation state");
 
 SYSCTL_INT(_machdep_mitigations_ssb, OID_AUTO, active, CTLFLAG_RD,
-    &hw_ssb_active, 0, "Speculative Store Bypass Disable active");
+    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");
 
 static void
 hw_ssb_set(bool enable, bool for_all_cpus)
@@ -987,7 +1013,34 @@ SYSCTL_PROC(_hw, OID_AUTO, spec_store_bypass_disable, CTLTYPE_INT |
 SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, disable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     hw_ssb_disable_handler, "I",
-    "Speculative Store Bypass Disable (0 - off, 1 - on, 2 - auto");
+    "Speculative Store Bypass Mitigation control (0 - off, 1 - on, 2 - auto)");
+
+static int
+sysctl_hw_ssb_disable_state_handler(SYSCTL_HANDLER_ARGS)
+{
+	const char *state;
+
+	switch (hw_ssb_disable) {
+	case 0: /* off */
+		state = "mitigation off";
+		break;
+	case 1: /* on */
+		state = "mitigation on";
+		break;
+	case 2:
+		state = "mitigation on (auto)";
+		break;
+    default:
+		state = "unknown";
+    }
+
+	return (SYSCTL_OUT(req, state, strlen(state)));
+}
+
+SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, state,
+    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
+    sysctl_hw_ssb_disable_state_handler, "A",
+    "Speculative Store Bypass Mitigation state");
 
 int hw_mds_disable;
 
@@ -1013,21 +1066,21 @@ sysctl_hw_mds_disable_state_handler(SYSCTL_HANDLER_ARGS)
 	const char *state;
 
 	if (mds_handler == mds_handler_void)
-		state = "inactive";
+		state = "mitigation off";
 	else if (mds_handler == mds_handler_verw)
-		state = "VERW";
+		state = "mitigation on (VERW)";
 	else if (mds_handler == mds_handler_ivb)
-		state = "software IvyBridge";
+		state = "mitigation on (IvyBridge)";
 	else if (mds_handler == mds_handler_bdw)
-		state = "software Broadwell";
+		state = "mitigation on (Broadwell)";
 	else if (mds_handler == mds_handler_skl_sse)
-		state = "software Skylake SSE";
+		state = "mitigation on (Skylake SSE)";
 	else if (mds_handler == mds_handler_skl_avx)
-		state = "software Skylake AVX";
+		state = "mitigation on (Skylake AVX)";
 	else if (mds_handler == mds_handler_skl_avx512)
-		state = "software Skylake AVX512";
+		state = "mitigation on (Skylake AVX512)";
 	else if (mds_handler == mds_handler_silvermont)
-		state = "software Silvermont";
+		state = "mitigation on (Silvermont)";
 	else
 		state = "unknown";
 	return (SYSCTL_OUT(req, state, strlen(state)));
@@ -1205,8 +1258,8 @@ SYSCTL_PROC(_hw, OID_AUTO, mds_disable, CTLTYPE_INT |
 SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, disable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_mds_disable_handler, "I",
-    "Microarchitectural Data Sampling Mitigation "
-    "(0 - off, 1 - on VERW, 2 - on SW, 3 - on AUTO");
+    "Microarchitectural Data Sampling Mitigation control"
+    "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO))");
 
 /*
  * Intel Transactional Memory Asynchronous Abort Mitigation
@@ -1343,8 +1396,8 @@ sysctl_taa_handler(SYSCTL_HANDLER_ARGS)
 SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, enable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_taa_handler, "I",
-    "TAA Mitigation enablement control "
-    "(0 - off, 1 - disable TSX, 2 - VERW, 3 - on AUTO");
+    "TSX Asynchronous Abort Mitigation control"
+    "(0 - off, 1 - on (disable TSX), 2 - on (VERW), 3 - on (AUTO))");
 
 static int
 sysctl_taa_state_handler(SYSCTL_HANDLER_ARGS)
@@ -1353,19 +1406,19 @@ sysctl_taa_state_handler(SYSCTL_HANDLER_ARGS)
 
 	switch (x86_taa_state) {
 	case TAA_NONE:
-		state = "inactive";
+		state = "mitigation off";
 		break;
 	case TAA_TSX_DISABLE:
-		state = "TSX disabled";
+		state = "mitigation on (TSX disabled)";
 		break;
 	case TAA_VERW:
-		state = "VERW";
+		state = "mitigation on (VERW)";
 		break;
 	case TAA_TAA_UC:
-		state = "Mitigated in microcode";
+		state = "mitigation on (microcode)";
 		break;
 	case TAA_NOT_PRESENT:
-		state = "TSX not present";
+		state = "mitigation not needed (TSX not present)";
 		break;
 	default:
 		state = "unknown";
@@ -1377,7 +1430,7 @@ sysctl_taa_state_handler(SYSCTL_HANDLER_ARGS)
 SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, state,
     CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_taa_state_handler, "A",
-    "TAA Mitigation state");
+    "TSX Asynchronous Abort Mitigation state");
 
 /*
  * Enable and restore kernel text write permissions.
