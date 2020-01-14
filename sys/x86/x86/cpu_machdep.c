@@ -1,3 +1,4 @@
+#include "stdafx.h"
 /*-
  * Copyright (c) 2003 Peter Wemm.
  * Copyright (c) 1992 Terrence R. Lambert.
@@ -938,7 +939,7 @@ sysctl_hw_ibrs_disable_state_handler(SYSCTL_HANDLER_ARGS)
 	return (SYSCTL_OUT(req, state, strlen(state)));
 }
 
-SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, state,
+SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, state,
     CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_hw_ibrs_disable_state_handler, "A",
     "Indirect Branch Restricted Speculation Mitigation state");
