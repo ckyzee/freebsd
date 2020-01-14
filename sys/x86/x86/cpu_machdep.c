@@ -1,4 +1,3 @@
-#include "stdafx.h"
 /*-
  * Copyright (c) 2003 Peter Wemm.
  * Copyright (c) 1992 Terrence R. Lambert.
