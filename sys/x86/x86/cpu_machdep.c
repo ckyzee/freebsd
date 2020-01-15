@@ -1254,7 +1254,7 @@ SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_mds_disable_handler, "I",
     "Microarchitectural Data Sampling Mitigation control "
-    "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO)");
+    "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO))");
 
 
 /*
