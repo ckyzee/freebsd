@@ -881,7 +881,7 @@ SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ibrs, CTLFLAG_RW, 0,
     "Indirect Branch Restricted Speculation state");
 
 SYSCTL_INT(_machdep_mitigations_ibrs, OID_AUTO, active, CTLFLAG_RD,
-    &hw_ibrs_active, 0, "Indirect Branch Restricted Speculation Mitigation state");
+    &hw_ibrs_active, 0, "Indirect Branch Restricted Speculation (0 - inactive, 1 - active)");
 
 void
 hw_ibrs_recalculate(void)
@@ -955,7 +955,7 @@ SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ssb, CTLFLAG_RW, 0,
     "Speculative Store Bypass Mitigation state");
 
 SYSCTL_INT(_machdep_mitigations_ssb, OID_AUTO, active, CTLFLAG_RD,
-    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");
+    &hw_ssb_active, 0, "Speculative Store Bypass (0 - inactive, 1 - active)");
 
 static void
 hw_ssb_set(bool enable, bool for_all_cpus)
