@@ -913,7 +913,7 @@ SYSCTL_PROC(_hw, OID_AUTO, ibrs_disable, CTLTYPE_INT | CTLFLAG_RWTUN |
     CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0, hw_ibrs_disable_handler, "I",
     "Disable Indirect Branch Restricted Speculation");
 
-SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, disable, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     hw_ibrs_disable_handler, "I",
     "Indirect Branch Restricted Speculation Mitigation control (0 - off, 1 - on)");
@@ -1010,7 +1010,7 @@ SYSCTL_PROC(_hw, OID_AUTO, spec_store_bypass_disable, CTLTYPE_INT |
     hw_ssb_disable_handler, "I",
     "Speculative Store Bypass Disable (0 - off, 1 - on, 2 - auto");
 
-SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, disable, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     hw_ssb_disable_handler, "I",
     "Speculative Store Bypass Mitigation control (0 - off, 1 - on, 2 - auto)");
@@ -1086,19 +1086,9 @@ sysctl_hw_mds_disable_state_handler(SYSCTL_HANDLER_ARGS)
 }
 
 SYSCTL_PROC(_hw, OID_AUTO, mds_disable_state,
-    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
-    sysctl_hw_mds_disable_state_handler, "A",
-    "Microarchitectural Data Sampling Mitigation state");
+}
 
-SYSCTL_NODE(_machdep_mitigations, OID_AUTO, mds, CTLFLAG_RW, 0,
-    "Microarchitectural Data Sampling Mitigation state");
-
-SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, state,
-    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
-    sysctl_hw_mds_disable_state_handler, "A",
-    "Microarchitectural Data Sampling Mitigation state");
-
-_Static_assert(__offsetof(struct pcpu, pc_mds_tmp) % 64 == 0, "MDS AVX512");
+SYSCTL_PROC(_hw, OID_AUTO, mds_disable_state,
 
 void
 hw_mds_recalculate(void)
@@ -1254,7 +1244,7 @@ SYSCTL_PROC(_hw, OID_AUTO, mds_disable, CTLTYPE_INT |
     "Microarchitectural Data Sampling Mitigation "
     "(0 - off, 1 - on VERW, 2 - on SW, 3 - on AUTO");
 
-SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, disable, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_mds_disable_handler, "I",
     "Microarchitectural Data Sampling Mitigation control"
