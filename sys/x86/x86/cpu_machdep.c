@@ -913,7 +913,7 @@ SYSCTL_PROC(_hw, OID_AUTO, ibrs_disable, CTLTYPE_INT | CTLFLAG_RWTUN |
     CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0, hw_ibrs_disable_handler, "I",
     "Disable Indirect Branch Restricted Speculation");
 
-SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, control, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, disable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     hw_ibrs_disable_handler, "I",
     "Indirect Branch Restricted Speculation Mitigation control (0 - off, 1 - on)");
@@ -947,15 +947,15 @@ SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, state,
 int hw_ssb_active;
 int hw_ssb_disable;
 
-SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
+/*SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
     &hw_ssb_active, 0,
     "Speculative Store Bypass Disable active");
 
 SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ssb, CTLFLAG_RW, 0,
     "Speculative Store Bypass Mitigation state");
 
-SYSCTL_INT(_machdep_mitigations_ssb, OID_AUTO, state, CTLFLAG_RD,
-    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");
+SYSCTL_INT(_machdep_mitigations_ssb, OID_AUTO, active, CTLFLAG_RD,
+    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");*/
 
 static void
 hw_ssb_set(bool enable, bool for_all_cpus)
@@ -1041,7 +1041,6 @@ SYSCTL_PROC(_machdep_mitigations_ssb, OID_AUTO, state,
     CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_hw_ssb_disable_state_handler, "A",
     "Speculative Store Bypass Mitigation state");
-
 int hw_mds_disable;
 
 /*
@@ -1228,9 +1227,9 @@ hw_mds_recalculate(void)
 static void
 hw_mds_recalculate_boot(void *arg __unused)
 {
+
 	hw_mds_recalculate();
 }
-
 SYSINIT(mds_recalc, SI_SUB_SMP, SI_ORDER_ANY, hw_mds_recalculate_boot, NULL);
 
 static int
@@ -1255,12 +1254,11 @@ SYSCTL_PROC(_hw, OID_AUTO, mds_disable, CTLTYPE_INT |
     "Microarchitectural Data Sampling Mitigation "
     "(0 - off, 1 - on VERW, 2 - on SW, 3 - on AUTO");
 
-SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, control, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, disable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_mds_disable_handler, "I",
     "Microarchitectural Data Sampling Mitigation control"
-    "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO))");
-
+    "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO)");
 
 /*
  * Intel Transactional Memory Asynchronous Abort Mitigation
@@ -1394,7 +1392,7 @@ sysctl_taa_handler(SYSCTL_HANDLER_ARGS)
 	return (0);
 }
 
-SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, control, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, enable, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_taa_handler, "I",
     "TSX Asynchronous Abort Mitigation control"
