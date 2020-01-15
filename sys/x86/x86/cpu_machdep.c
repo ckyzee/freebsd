@@ -947,7 +947,7 @@ SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, state,
 int hw_ssb_active;
 int hw_ssb_disable;
 
-/*SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
+SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
     &hw_ssb_active, 0,
     "Speculative Store Bypass Disable active");
 
@@ -955,7 +955,7 @@ SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ssb, CTLFLAG_RW, 0,
     "Speculative Store Bypass Mitigation state");
 
 SYSCTL_INT(_machdep_mitigations_ssb, OID_AUTO, active, CTLFLAG_RD,
-    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");*/
+    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");
 
 static void
 hw_ssb_set(bool enable, bool for_all_cpus)
@@ -984,10 +984,6 @@ hw_ssb_recalculate(bool all_cpus)
 		break;
 	case 1: /* on */
 		hw_ssb_set(true, all_cpus);
-		break;
-	case 2: /* auto */
-		hw_ssb_set((cpu_ia32_arch_caps & IA32_ARCH_CAP_SSB_NO) != 0 ?
-		    false : true, all_cpus);
 		break;
 	}
 }
