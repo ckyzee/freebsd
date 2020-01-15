@@ -1394,7 +1394,7 @@ sysctl_taa_handler(SYSCTL_HANDLER_ARGS)
 	return (0);
 }
 
-SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, enable, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_taa_handler, "I",
     "TSX Asynchronous Abort Mitigation control"
