@@ -1060,7 +1060,46 @@ void mds_handler_skl_avx512(void);
 void mds_handler_silvermont(void);
 void (*mds_handler)(void) = mds_handler_void;
 
+static int
+sysctl_hw_mds_disable_state_handler(SYSCTL_HANDLER_ARGS)
+{
+	const char *state;
 
+	if (mds_handler == mds_handler_void)
+		state = "mitigation off";
+	else if (mds_handler == mds_handler_verw)
+		state = "mitigation on (VERW)";
+	else if (mds_handler == mds_handler_ivb)
+		state = "mitigation on (IvyBridge)";
+	else if (mds_handler == mds_handler_bdw)
+		state = "mitigation on (Broadwell)";
+	else if (mds_handler == mds_handler_skl_sse)
+		state = "mitigation on (Skylake SSE)";
+	else if (mds_handler == mds_handler_skl_avx)
+		state = "mitigation on (Skylake AVX)";
+	else if (mds_handler == mds_handler_skl_avx512)
+		state = "mitigation on (Skylake AVX512)";
+	else if (mds_handler == mds_handler_silvermont)
+		state = "mitigation on (Silvermont)";
+	else
+		state = "unknown";
+	return (SYSCTL_OUT(req, state, strlen(state)));
+}
+
+SYSCTL_PROC(_hw, OID_AUTO, mds_disable_state,
+    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
+    sysctl_hw_mds_disable_state_handler, "A",
+    "Microarchitectural Data Sampling Mitigation state");
+
+SYSCTL_NODE(_machdep_mitigations, OID_AUTO, mds, CTLFLAG_RW, 0,
+    "Microarchitectural Data Sampling Mitigation state");
+
+SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, state,
+    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
+    sysctl_hw_mds_disable_state_handler, "A",
+    "Microarchitectural Data Sampling Mitigation state");
+
+_Static_assert(__offsetof(struct pcpu, pc_mds_tmp) % 64 == 0, "MDS AVX512");
 
 void
 hw_mds_recalculate(void)
@@ -1222,47 +1261,6 @@ SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, disable, CTLTYPE_INT |
     "Microarchitectural Data Sampling Mitigation control"
     "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO))");
 
-
-static int
-sysctl_hw_mds_disable_state_handler(SYSCTL_HANDLER_ARGS)
-{
-	const char *state;
-
-	if (mds_handler == mds_handler_void)
-		state = "mitigation off";
-	else if (mds_handler == mds_handler_verw)
-		state = "mitigation on (VERW)";
-	else if (mds_handler == mds_handler_ivb)
-		state = "mitigation on (IvyBridge)";
-	else if (mds_handler == mds_handler_bdw)
-		state = "mitigation on (Broadwell)";
-	else if (mds_handler == mds_handler_skl_sse)
-		state = "mitigation on (Skylake SSE)";
-	else if (mds_handler == mds_handler_skl_avx)
-		state = "mitigation on (Skylake AVX)";
-	else if (mds_handler == mds_handler_skl_avx512)
-		state = "mitigation on (Skylake AVX512)";
-	else if (mds_handler == mds_handler_silvermont)
-		state = "mitigation on (Silvermont)";
-	else
-		state = "unknown";
-	return (SYSCTL_OUT(req, state, strlen(state)));
-}
-
-SYSCTL_PROC(_hw, OID_AUTO, mds_disable_state,
-    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
-    sysctl_hw_mds_disable_state_handler, "A",
-    "Microarchitectural Data Sampling Mitigation state");
-
-SYSCTL_NODE(_machdep_mitigations, OID_AUTO, mds, CTLFLAG_RW, 0,
-    "Microarchitectural Data Sampling Mitigation state");
-
-SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, state,
-    CTLTYPE_STRING | CTLFLAG_RD | CTLFLAG_MPSAFE, NULL, 0,
-    sysctl_hw_mds_disable_state_handler, "A",
-    "Microarchitectural Data Sampling Mitigation state");
-
-_Static_assert(__offsetof(struct pcpu, pc_mds_tmp) % 64 == 0, "MDS AVX512");
 
 /*
  * Intel Transactional Memory Asynchronous Abort Mitigation
