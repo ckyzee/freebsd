@@ -947,7 +947,7 @@ SYSCTL_PROC(_machdep_mitigations_ibrs, OID_AUTO, state,
 int hw_ssb_active;
 int hw_ssb_disable;
 
-SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
+/*SYSCTL_INT(_hw, OID_AUTO, spec_store_bypass_disable_active, CTLFLAG_RD,
     &hw_ssb_active, 0,
     "Speculative Store Bypass Disable active");
 
@@ -955,7 +955,7 @@ SYSCTL_NODE(_machdep_mitigations, OID_AUTO, ssb, CTLFLAG_RW, 0,
     "Speculative Store Bypass Mitigation state");
 
 SYSCTL_INT(_machdep_mitigations_ssb, OID_AUTO, active, CTLFLAG_RD,
-    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");
+    &hw_ssb_active, 0, "Speculative Store Bypass Mitigation state");*/
 
 static void
 hw_ssb_set(bool enable, bool for_all_cpus)
@@ -1254,10 +1254,10 @@ SYSCTL_PROC(_hw, OID_AUTO, mds_disable, CTLTYPE_INT |
     "Microarchitectural Data Sampling Mitigation "
     "(0 - off, 1 - on VERW, 2 - on SW, 3 - on AUTO");
 
-SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, disable, CTLTYPE_INT |
+SYSCTL_PROC(_machdep_mitigations_mds, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_mds_disable_handler, "I",
-    "Microarchitectural Data Sampling Mitigation control"
+    "Microarchitectural Data Sampling Mitigation control "
     "(0 - off, 1 - on (VERW), 2 - on (SW), 3 - on (AUTO)");
 
 
@@ -1396,7 +1396,7 @@ sysctl_taa_handler(SYSCTL_HANDLER_ARGS)
 SYSCTL_PROC(_machdep_mitigations_taa, OID_AUTO, control, CTLTYPE_INT |
     CTLFLAG_RWTUN | CTLFLAG_NOFETCH | CTLFLAG_MPSAFE, NULL, 0,
     sysctl_taa_handler, "I",
-    "TSX Asynchronous Abort Mitigation control"
+    "TSX Asynchronous Abort Mitigation control "
     "(0 - off, 1 - on (disable TSX), 2 - on (VERW), 3 - on (AUTO))");
 
 static int
