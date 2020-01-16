@@ -1023,10 +1023,7 @@ sysctl_hw_ssb_disable_state_handler(SYSCTL_HANDLER_ARGS)
 	case 1: /* on */
 		state = "mitigation on";
 		break;
-	case 2:
-		state = "mitigation on (auto)";
-		break;
-    default:
+	default:
 		state = "unknown";
     }
 
