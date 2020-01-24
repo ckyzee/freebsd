@@ -956,6 +956,20 @@ main(int argc, char *const *argv)
 			if ((options & F_ONCE && nreceived) ||
 			    (npackets && nreceived >= npackets))
 				break;
+ 		}
+ 		if (n == 0 || options & F_FLOOD) {
++			u_char *outpackhdr_end = &outpackhdr[IP_MAXPACKET];
+ 			if (sweepmax && sntransmitted == snpackets) {
+ 				for (i = 0; i < sweepincr ; ++i)
+-					*datap++ = i;
++					if (datap < outpackhdr_end)
++						*datap++ = i;
++					else
++						break;
+ 				datalen += sweepincr;
+ 				if (datalen > sweepmax)
+ 					break;
+				/*break;
 		}
 		if (n == 0 || options & F_FLOOD) {
 			if (sweepmax && sntransmitted == snpackets) {
@@ -963,7 +977,7 @@ main(int argc, char *const *argv)
 					*datap++ = i;
 				datalen += sweepincr;
 				if (datalen > sweepmax)
-					break;
+					break;*/
 				send_len = icmp_len + datalen;
 				sntransmitted = 0;
 			}
@@ -1064,11 +1078,27 @@ pinger(void)
 	memcpy(outpack, &icp, ICMP_MINLEN + phdr_len);
 
 	cc = ICMP_MINLEN + phdr_len + datalen;
+ 
+ 	/* compute ICMP checksum here */
+-	icp->icmp_cksum = in_cksum((u_char *)icp, cc);
++	icp->icmp_cksum = in_cksum((u_char *)icp, sizeof(struct ip), IP_MAXPACKET, cc);
+ 
+ 	if (options & F_HDRINCL) {
+ 		cc += sizeof(struct ip);
+ 		ip = (struct ip *)outpackhdr;
+ 		ip->ip_len = htons(cc);
+-		ip->ip_sum = in_cksum(outpackhdr, cc);
++		ip->ip_sum = in_cksum(outpackhdr, sizeof(struct ip), IP_MAXPACKET, cc);
+ 		packet = outpackhdr;
+ 	}
+ 	i = send(ssend, (char *)packet, cc, 0);
+	
+	/*cc = ICMP_MINLEN + phdr_len + datalen;
 
 	/* compute ICMP checksum here */
-	icp.icmp_cksum = in_cksum(outpack, cc);
+	/*icp.icmp_cksum = in_cksum(outpack, cc);
 	/* Update icmp_cksum in the raw packet data buffer. */
-	memcpy(outpack + offsetof(struct icmp, icmp_cksum), &icp.icmp_cksum,
+	/*memcpy(outpack + offsetof(struct icmp, icmp_cksum), &icp.icmp_cksum,
 	    sizeof(icp.icmp_cksum));
 
 	if (options & F_HDRINCL) {
@@ -1077,15 +1107,16 @@ pinger(void)
 		cc += sizeof(struct ip);
 		ip.ip_len = htons(cc);
 		/* Update ip_len in the raw packet data buffer. */
-		memcpy(outpackhdr + offsetof(struct ip, ip_len), &ip.ip_len,
+		/*memcpy(outpackhdr + offsetof(struct ip, ip_len), &ip.ip_len,
 		    sizeof(ip.ip_len));
 		ip.ip_sum = in_cksum(outpackhdr, cc);
 		/* Update ip_sum in the raw packet data buffer. */
-		memcpy(outpackhdr + offsetof(struct ip, ip_sum), &ip.ip_sum,
+		/*memcpy(outpackhdr + offsetof(struct ip, ip_sum), &ip.ip_sum,
 		    sizeof(ip.ip_sum));
 		packet = outpackhdr;
 	}
-	i = send(ssend, (char *)packet, cc, 0);
+	i = send(ssend, (char *)packet, cc, 0);*/
+
 	if (i < 0 || i != cc)  {
 		if (i < 0) {
 			if (options & F_FLOOD && errno == ENOBUFS) {
