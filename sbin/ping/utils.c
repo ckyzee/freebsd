@@ -55,7 +55,7 @@ __FBSDID("$FreeBSD$");
  *	Checksum routine for Internet Protocol family headers (C Version)
  */
 u_short
-in_cksum(u_char *addr, size_t ipstructsize, int ip_maxpacket, int len)
+in_cksum(u_char *addr, int len)
 {
 	int nleft, sum;
 	u_char *w;
@@ -74,7 +74,7 @@ in_cksum(u_char *addr, size_t ipstructsize, int ip_maxpacket, int len)
 	 * sequential 16 bit words to it, and at the end, fold back all the
 	 * carry bits from the top 16 bits into the lower 16 bits.
 	 */
-	while ((nleft > 1) && (w < &addr[ip_maxpacket - ipstructsize - sizeof(u_short)]))  {
+	while (nleft > 1)  {
 		u_short data;
 
 		memcpy(&data, w, sizeof(data));

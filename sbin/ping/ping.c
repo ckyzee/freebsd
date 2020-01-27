@@ -958,13 +958,9 @@ main(int argc, char *const *argv)
 				break;
 		}
 		if (n == 0 || options & F_FLOOD) {
-			u_char *outpackhdr_end = &outpackhdr[IP_MAXPACKET];
 			if (sweepmax && sntransmitted == snpackets) {
 				for (i = 0; i < sweepincr ; ++i)
-					if (datap < outpackhdr_end)
-						*datap++ = i;
-					else
-						break;
+					*datap++ = i;
 				datalen += sweepincr;
 				if (datalen > sweepmax)
 					break;
