@@ -53,21 +53,12 @@ __FBSDID("$FreeBSD$");
 /*
  * in_cksum --
  *	Checksum routine for Internet Protocol family headers (C Version)
-  */
- u_short
--in_cksum(u_char *addr, int len)
-+in_cksum(u_char *addr, size_t ipstructsize, int ip_maxpacket, int len)
- {
- 	int nleft, sum;
- 	u_char *w;
-
- /*	Checksum routine for Internet Protocol family headers (C Version)
  */
-/*u_short
+u_short
 in_cksum(u_char *addr, int len)
 {
 	int nleft, sum;
-	u_char *w;*/
+	u_char *w;
 	union {
 		u_short	us;
 		u_char	uc[2];
@@ -81,20 +72,12 @@ in_cksum(u_char *addr, int len)
 	/*
 	 * Our algorithm is simple, using a 32 bit accumulator (sum), we add
 	 * sequential 16 bit words to it, and at the end, fold back all the
- 	 * carry bits from the top 16 bits into the lower 16 bits.
- 	 */
--	while (nleft > 1)  {
-+	while ((nleft > 1) && (w < &addr[ip_maxpacket - ipstructsize - sizeof(u_short)]))  {
- 		u_short data;
- 
- 		memcpy(&data, w, sizeof(data));
-	/* sequential 16 bit words to it, and at the end, fold back all the
 	 * carry bits from the top 16 bits into the lower 16 bits.
 	 */
-	/*while (nleft > 1)  {
+	while (nleft > 1)  {
 		u_short data;
 
-		memcpy(&data, w, sizeof(data));*/
+		memcpy(&data, w, sizeof(data));
 		sum += data;
 		w += sizeof(data);
 		nleft -= sizeof(data);

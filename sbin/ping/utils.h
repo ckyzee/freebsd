@@ -32,13 +32,7 @@
 #define UTILS_H 1
 
 #include <sys/types.h>
- 
--u_short in_cksum(u_char *, int);
-+u_short in_cksum(u_char *, size_t, int, int);
- 
- #endif
- /*#include <sys/types.h>
 
 u_short in_cksum(u_char *, int);
 
-#endif*/
+#endif
