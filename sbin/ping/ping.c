@@ -958,9 +958,13 @@ main(int argc, char *const *argv)
 				break;
 		}
 		if (n == 0 || options & F_FLOOD) {
+			u_char *outpackhdr_end = &outpackhdr[IP_MAXPACKET];
 			if (sweepmax && sntransmitted == snpackets) {
 				for (i = 0; i < sweepincr ; ++i)
-					*datap++ = i;
+					if (datap < outpackhdr_end)
+						*datap++ = i;
+					else
+						break;
 				datalen += sweepincr;
 				if (datalen > sweepmax)
 					break;
@@ -1067,6 +1071,7 @@ pinger(void)
 
 	/* compute ICMP checksum here */
 	icp.icmp_cksum = in_cksum(outpack, cc);
+	icp.icmp_cksum = in_cksum(outpack, sizeof(struct ip), IP_MAXPACKET, cc);
 	/* Update icmp_cksum in the raw packet data buffer. */
 	memcpy(outpack + offsetof(struct icmp, icmp_cksum), &icp.icmp_cksum,
 	    sizeof(icp.icmp_cksum));
@@ -1079,7 +1084,7 @@ pinger(void)
 		/* Update ip_len in the raw packet data buffer. */
 		memcpy(outpackhdr + offsetof(struct ip, ip_len), &ip.ip_len,
 		    sizeof(ip.ip_len));
-		ip.ip_sum = in_cksum(outpackhdr, cc);
+		ip.ip_sum = in_cksum(outpackhdr, sizeof(struct ip), IP_MAXPACKET, cc);
 		/* Update ip_sum in the raw packet data buffer. */
 		memcpy(outpackhdr + offsetof(struct ip, ip_sum), &ip.ip_sum,
 		    sizeof(ip.ip_sum));
