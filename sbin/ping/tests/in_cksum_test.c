@@ -46,7 +46,7 @@ ATF_TC_BODY(aligned_even_length_big_endian, tc)
 		{0x12, 0x34, 0x56, 0x78};
 	u_short sum;
 
-	sum = in_cksum(data, nitems(data));
+	sum = in_cksum(data, 20, 65535, nitems(data));
 	ATF_REQUIRE(sum == 0x5397);
 }
 
@@ -57,7 +57,7 @@ ATF_TC_BODY(aligned_odd_length_big_endian, tc)
 		{0x12, 0x34, 0x56, 0x78, 0x9a};
 	u_short sum;
 
-	sum = in_cksum(data, nitems(data));
+	sum = in_cksum(data, 20, 65535, nitems(data));
 	ATF_REQUIRE(sum == 0x52fd);
 }
 
@@ -68,7 +68,7 @@ ATF_TC_BODY(aligned_even_length_little_endian, tc)
 		{0x34, 0x12, 0x78, 0x56};
 	u_short sum;
 
-	sum = in_cksum(data, nitems(data));
+	sum = in_cksum(data, 20, 65535, nitems(data));
 	ATF_REQUIRE_MSG(sum == 0x9753, "%d", sum);
 }
 
@@ -79,7 +79,7 @@ ATF_TC_BODY(aligned_odd_length_little_endian, tc)
 		{0x34, 0x12, 0x78, 0x56, 0x00, 0x9a};
 	u_short sum;
 
-	sum = in_cksum(data, nitems(data));
+	sum = in_cksum(data, 20, 65535, nitems(data));
 	ATF_REQUIRE(sum == 0xfd52);
 }
 
@@ -90,7 +90,7 @@ ATF_TC_BODY(unaligned_even_length_big_endian, tc)
 		{0x00, 0x12, 0x34, 0x56, 0x78};
 	u_short sum;
 
-	sum = in_cksum(data + 1, nitems(data) - 1);
+	sum = in_cksum(data + 1, 20, 65535, nitems(data) - 1);
 	ATF_REQUIRE(sum == 0x5397);
 }
 
@@ -101,7 +101,7 @@ ATF_TC_BODY(unaligned_odd_length_big_endian, tc)
 		{0x00, 0x12, 0x34, 0x56, 0x78, 0x9a};
 	u_short sum;
 
-	sum = in_cksum(data + 1, nitems(data) - 1);
+	sum = in_cksum(data + 1, 20, 65535, nitems(data) - 1);
 	ATF_REQUIRE(sum == 0x52fd);
 }
 
@@ -112,7 +112,7 @@ ATF_TC_BODY(unaligned_even_length_little_endian, tc)
 		{0x00, 0x34, 0x12, 0x78, 0x56};
 	u_short sum;
 
-	sum = in_cksum(data + 1, nitems(data) - 1);
+	sum = in_cksum(data + 1, 20, 65535, nitems(data) - 1);
 	ATF_REQUIRE_MSG(sum == 0x9753, "%d", sum);
 }
 
@@ -123,7 +123,7 @@ ATF_TC_BODY(unaligned_odd_length_little_endian, tc)
 		{0x00, 0x34, 0x12, 0x78, 0x56, 0x00, 0x9a};
 	u_short sum;
 
-	sum = in_cksum(data + 1, nitems(data) - 1);
+	sum = in_cksum(data + 1, 20, 65535, nitems(data) - 1);
 	ATF_REQUIRE(sum == 0xfd52);
 }
 
