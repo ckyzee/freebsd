@@ -19,7 +19,7 @@ LIBADD+=	cap_dns
 CFLAGS+=-DWITH_CASPER
 .endif
 
-CFLAGS+=-DIPSEC
+CFLAGS+=-DIPSEC -fsanitize=address -O0
 LIBADD+=	ipsec
 
 HAS_TESTS=
