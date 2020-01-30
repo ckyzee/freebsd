@@ -33,6 +33,7 @@ __FBSDID("$FreeBSD$");
 
 #include <atf-c.h>
 
+#include <sys/socket.h>
 #include "../../../include/protocols/routed.h"
 
 #include "../utils.h"
