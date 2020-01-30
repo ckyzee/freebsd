@@ -63,7 +63,7 @@ extern "C" {
  * such as `gated` to use this file to define RIPv1.
  */
 struct netinfo {
-	struct	sockaddr rip_dst;	/* destination net/host */
+	struct sockaddr rip_dst;	/* destination net/host */
 	u_int32_t   rip_metric;		/* cost of route */
 };
 #else
